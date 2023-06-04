@@ -5,8 +5,11 @@
         <v-col cols="3" md="3" lg="3" align-self="center" class="ml-10">
           <h2 class="white--text">Project Title</h2>
         </v-col>
-        <v-col cols="2" md="2" lg="2">
-          <v-btn color="success" dark> Crear {{ triggerCreateTitle }} </v-btn>
+        <v-col cols="2" md="2" lg="2" align-self="center">
+          <ModalCreateCard
+            :modalTitle="triggerCreateTitle"
+            :ticketCreation="ticketView"
+          ></ModalCreateCard>
         </v-col>
       </v-row>
 
@@ -29,9 +32,26 @@
         </v-col>
       </v-row>
 
-      <span v-if="ticketView">
-        <TicketCard v-for="i in [1, 2, 3, 4, 5]" :key="i"></TicketCard>
-      </span>
+      <v-row v-if="ticketView" class="mb-0 pb-0">
+        <v-col
+          class="mb-0 pb-0"
+          cols="12"
+          md="12"
+          lg="12"
+          @click="showTicketCard(i)"
+          v-for="i in [1, 2, 3, 4, 5, 6]"
+          :key="i"
+        >
+          <TicketCard class="mb-0"></TicketCard>
+        </v-col>
+      </v-row>
+      <ModalCreateCard
+        v-if="ticketCardView"
+        :modalTitle="'Ticket'"
+        :showDetails="true"
+        :ticketView="true"
+        @closeDetailCard="closeDetailCard"
+      ></ModalCreateCard>
       <span v-if="membersView">
         <MemberCard></MemberCard>
       </span>
@@ -45,12 +65,14 @@ import { Component } from 'vue-property-decorator';
 import TicketCard from '@/views/TicketCard.vue';
 import MemberCard from '@/views/MemberCard.vue';
 import NotFound from '@/views/NotFound.vue';
+import ModalCreateCard from '@/views/ModalCreateCard.vue';
 
 @Component({
   components: {
     TicketCard,
     MemberCard,
     NotFound,
+    ModalCreateCard,
   },
   name: 'SingleProjectView',
 })
@@ -58,6 +80,16 @@ export default class SingleProjectView extends Vue {
   tickets = [];
   ticketView = true;
   membersView = false;
+
+  ticketCardView = false;
+
+  showTicketCard() {
+    this.ticketCardView = !this.ticketCardView;
+  }
+
+  closeDetailCard(trigger: boolean) {
+    this.ticketCardView = trigger;
+  }
 
   triggetTicketsView() {
     this.membersView = false;

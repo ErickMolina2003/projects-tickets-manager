@@ -1,13 +1,16 @@
 <template>
   <v-container>
-    <v-row justify="end">
+    <v-row class="mt-2" justify="end">
       <v-col cols="2" md="2" lg="2">
-        <v-btn block color="success" dark> Crear Proyecto </v-btn>
+        <ModalCreateCard
+          :modalTitle="'Proyecto'"
+          :projectCreation="true"
+        ></ModalCreateCard>
       </v-col>
     </v-row>
 
     <v-row>
-      <v-col v-for="i in [1, 2, 3,]" :key="i" cols="3" md="3" lg="3">
+      <v-col v-for="i in [1, 2, 3]" :key="i" cols="3" md="3" lg="3">
         <ProjectCard></ProjectCard>
       </v-col>
     </v-row>
@@ -18,10 +21,12 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import ProjectCard from '../views/ProjectCard.vue';
+import ModalCreateCard from '@/views/ModalCreateCard.vue';
 
 @Component({
   components: {
     ProjectCard,
+    ModalCreateCard,
   },
   name: 'ProjectsView',
 })

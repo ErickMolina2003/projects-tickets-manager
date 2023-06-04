@@ -40,5 +40,6 @@ export default class TicketCard extends Vue {}
   border-radius: 12px;
   background: #009688;
   color: white;
+  cursor: pointer;
 }
 </style>
