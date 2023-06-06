@@ -13,20 +13,10 @@
       src="https://png.pngtree.com/png-vector/20190521/ourmid/pngtree-illustration-project-management-the-concept-of-people-discussing-in-front-of-png-image_1055905.jpg"
     ></v-img>
 
-    <v-card-title>Titulo</v-card-title>
+    <v-card-title>{{ projectTitle }}</v-card-title>
 
     <v-card-text>
-      <v-row align="center" class="mx-0">
-        <div class="grey--text">
-          <v-icon>mdi-account</v-icon> 50 Integrantes
-        </div>
-      </v-row>
-      <div class="my-4 text-subtitle-1">
-        <v-icon>mdi-percent</v-icon>
-        Progreso 3/5 tareas terminadas
-      </div>
-
-      <div>descripcion del proyecto</div>
+      <div>{{description}}</div>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
@@ -39,14 +29,29 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Component } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
+import UserStore from '@/store/models/user';
+import { getModule } from 'vuex-module-decorators';
 
 @Component({
   name: 'ProjectCard',
 })
 export default class ProjectCard extends Vue {
+  @Prop({ type: String, default: 'Project-title' })
+  projectTitle!: string;
+
+  @Prop({ type: String, default: 'Project-description' })
+  description!: string;
+
+  @Prop({ type: Number, })
+  projectId!: number;
+
+  userStore = getModule(UserStore, this.$store);
+
+
   goToProject() {
-    this.$router.push('/projectId');
+    this.userStore.setProjectId(this.projectId);
+    this.$router.push(`/project/${this.projectId}`);
   }
 }
 </script>

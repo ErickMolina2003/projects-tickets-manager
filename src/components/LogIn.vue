@@ -5,10 +5,16 @@
         <v-icon class="pl-3" large>mdi-account</v-icon>
       </v-col>
       <v-col class="py-0" cols="12" md="4" lg="4">
-        <v-text-field label="Usuario" outlined rounded></v-text-field>
+        <v-text-field
+          v-model="username"
+          label="Usuario"
+          outlined
+          rounded
+        ></v-text-field>
       </v-col>
       <v-col class="py-0" cols="12" md="4" lg="4">
         <v-text-field
+          v-model="password"
           label="Contrasena"
           type="password"
           outlined
@@ -20,7 +26,9 @@
           Crear Cuenta
         </p>
       </v-col>
-      <v-btn rounded elevation="0" color="primary">Iniciar Sesion</v-btn>
+      <v-btn rounded elevation="0" color="primary" @click="logIn"
+        >Iniciar Sesion</v-btn
+      >
     </v-row>
 
     <v-row v-if="register" class="d-flex flex-column" align-content="center">
@@ -28,31 +36,41 @@
         <v-icon class="pl-3" large>mdi-account-plus</v-icon>
       </v-col>
       <v-col class="py-0" cols="12" md="4" lg="4">
-        <v-text-field label="Usuario" outlined rounded></v-text-field>
+        <v-text-field
+          label="Usuario"
+          v-model="newUsername"
+          outlined
+          rounded
+        ></v-text-field>
       </v-col>
       <v-col class="py-0" cols="12" md="4" lg="4">
-        <v-text-field label="Nombre" outlined rounded></v-text-field>
+        <v-text-field
+          label="Nombre"
+          v-model="firstName"
+          outlined
+          rounded
+        ></v-text-field>
       </v-col>
       <v-col class="py-0" cols="12" md="4" lg="4">
-        <v-text-field label="Apellido" outlined rounded></v-text-field>
+        <v-text-field
+          label="Apellido"
+          v-model="lastName"
+          outlined
+          rounded
+        ></v-text-field>
       </v-col>
       <v-col class="py-0" cols="12" md="4" lg="4">
         <v-text-field
           label="Contrasena"
+          v-model="newPassword"
           type="password"
           outlined
           rounded
         ></v-text-field>
       </v-col>
-      <v-col class="py-0" cols="12" md="4" lg="4">
-        <v-text-field
-          label="Confirmar Contrasena"
-          outlined
-          type="password"
-          rounded
-        ></v-text-field>
-      </v-col>
-      <v-btn rounded elevation="0" color="primary">Registrarse</v-btn>
+      <v-btn rounded elevation="0" color="primary" @click="createAccount"
+        >Registrarse</v-btn
+      >
     </v-row>
   </v-container>
 </template>
@@ -60,6 +78,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
+import { getUsers, createUser } from '@/services/UsersService';
+import UserStore from '@/store/models/user';
+import { getModule } from 'vuex-module-decorators';
 
 @Component({
   name: 'LogIn',
@@ -71,8 +92,48 @@ class LogIn extends Vue {
   @Prop({ type: Boolean, default: false })
   register!: boolean;
 
+  userStore = getModule(UserStore, this.$store);
+
+  username = '';
+  password = '';
+
+  firstName = '';
+  lastName = '';
+  newUsername = '';
+  newPassword = '';
+
   goToRegister() {
     this.$emit('goToRegister', true);
+  }
+
+  async logIn() {
+    const users = await getUsers();
+
+    users.forEach((user: any) => {
+      if (user.first_name == this.username) {
+        this.userStore.setUser(user);
+        this.userStore.setUserId(user.id);
+        this.$router.push('/projects');
+      }
+    });
+  }
+
+  async createAccount() {
+    const newUser = {
+      first_name: this.firstName,
+      last_name: this.lastName,
+      username: this.newUsername,
+      password: this.newPassword,
+    };
+
+    const createdUser = await createUser(newUser);
+
+    if (createdUser) {
+      this.userStore.setUser(createdUser);
+      this.userStore.setUserId(createdUser.id);
+
+      this.$router.push('/projects');
+    }
   }
 }
 

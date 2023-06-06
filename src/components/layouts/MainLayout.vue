@@ -3,7 +3,7 @@
     <SideBar @changingRoute="getHeaderTitle"></SideBar>
 
     <v-main class="pl-0">
-      <MainHeader :title="headerTitle"></MainHeader>
+      <MainHeader :title="headerTitle" :userName="'Erick'"></MainHeader>
       <router-view />
     </v-main>
   </v-app>

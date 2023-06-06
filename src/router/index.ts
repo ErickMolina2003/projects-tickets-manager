@@ -32,7 +32,7 @@ const routes: Array<RouteConfig> = [
         component: () => import('../components/CalendarView.vue'),
       },
       {
-        path: '/projectId',
+        path: '/project/*',
         name: 'ProjectView',
         component: () => import('../components/SingleProjectView.vue'),
       },

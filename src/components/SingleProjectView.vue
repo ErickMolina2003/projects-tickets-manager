@@ -3,7 +3,7 @@
     <v-card height="100%" width="100%" color="teal lighten-3">
       <v-row justify="space-between">
         <v-col cols="3" md="3" lg="3" align-self="center" class="ml-10">
-          <h2 class="white--text">Project Title</h2>
+          <h2 class="white--text">{{project.project.name}}</h2>
         </v-col>
         <v-col cols="2" md="2" lg="2" align-self="center">
           <ModalCreateCard
@@ -39,10 +39,16 @@
           md="12"
           lg="12"
           @click="showTicketCard(i)"
-          v-for="i in [1, 2, 3, 4, 5, 6]"
-          :key="i"
+          v-for="ticket in project.tickets"
+          :key="ticket.id"
         >
-          <TicketCard class="mb-0"></TicketCard>
+          <TicketCard
+            class="mb-0"
+            :name="ticket.name"
+            :deadline="ticket.dead_line"
+            :status="ticket.status"
+            :id="ticket.id"
+          ></TicketCard>
         </v-col>
       </v-row>
       <ModalCreateCard
@@ -52,9 +58,22 @@
         :ticketView="true"
         @closeDetailCard="closeDetailCard"
       ></ModalCreateCard>
-      <span v-if="membersView">
-        <MemberCard></MemberCard>
-      </span>
+      <v-row v-if="membersView">
+        <v-col
+          class="mb-0 pb-0"
+          cols="4"
+          md="4"
+          lg="4"
+          v-for="user in project.clients"
+          :key="user.id"
+        >
+          <MemberCard
+            :name="user.first_name"
+            :lastName="user.last_name"
+            :username="user.username"
+          ></MemberCard>
+        </v-col>
+      </v-row>
     </v-card>
   </v-container>
 </template>
@@ -66,6 +85,7 @@ import TicketCard from '@/views/TicketCard.vue';
 import MemberCard from '@/views/MemberCard.vue';
 import NotFound from '@/views/NotFound.vue';
 import ModalCreateCard from '@/views/ModalCreateCard.vue';
+import { getProject } from '@/services/ProjectsService';
 
 @Component({
   components: {
@@ -78,10 +98,21 @@ import ModalCreateCard from '@/views/ModalCreateCard.vue';
 })
 export default class SingleProjectView extends Vue {
   tickets = [];
+  users = [];
   ticketView = true;
   membersView = false;
 
   ticketCardView = false;
+
+  projectId = '';
+  project = {};
+
+  async mounted() {
+    console.log(this.$router.currentRoute.params.pathMatch);
+    this.projectId = this.$router.currentRoute.params.pathMatch;
+    this.project = await getProject(this.projectId);
+    console.log(this.project);
+  }
 
   showTicketCard() {
     this.ticketCardView = !this.ticketCardView;

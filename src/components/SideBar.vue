@@ -24,7 +24,7 @@
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block color="error" dark> Logout </v-btn>
+        <v-btn block color="error" dark @click="logOut"> Logout </v-btn>
       </div>
     </template>
   </v-navigation-drawer>
@@ -49,6 +49,10 @@ export default class SideBar extends Vue {
 
     this.$emit('changingRoute', url);
     this.$router.push(url);
+  }
+
+  logOut() {
+    this.$router.push('/login')
   }
 }
 </script>
